@@ -5,14 +5,14 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD="$ROOT/build"
 
 mkdir -p "$BUILD"
-cd "$BUILD"
 
-cmake "$ROOT" \
+cmake "$ROOT" -B "$BUILD" \
+    -G "Unix Makefiles" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY="$BUILD/bin" \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
-make -j"$(nproc)"
+cmake --build "$BUILD" --parallel
 
 echo ""
 echo "==> Build complete. Binaries in $BUILD/bin/"
