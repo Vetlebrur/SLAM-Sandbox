@@ -203,6 +203,9 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+#dataset ignore
+vicon_room1/
+
 # Ruff stuff:
 .ruff_cache/
 
@@ -216,3 +219,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# C++ build
+build/
+compile_commands.json
+*.o
+*.a
+claude
