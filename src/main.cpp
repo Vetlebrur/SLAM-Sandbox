@@ -1,6 +1,7 @@
 #include "stereo_tracker.hpp"
+#include "imu_ekf.hpp"
+#include "visualizer.hpp"
 #include "calibration.hpp"
-#include <opencv2/highgui.hpp>
 #include <iostream>
 
 int main() {
@@ -21,8 +22,33 @@ int main() {
     cv::resizeWindow("cam0",   752,  480);
     cv::resizeWindow("stereo", 1504, 480);
 
+    // ── Backend ───────────────────────────────────────────────────────────────
+    ImuEkf    ekf(calib.imu);
+    Visualizer viz("trajectory.txt");
+
+    // ── Frontend ──────────────────────────────────────────────────────────────
     StereoTracker tracker(calib);
     DataLoader    loader(bag, 1.0);
+
+    // EKF propagation driven directly from the bag's IMU topic
+    loader.addCallback("/imu0", [&](const BagMessage& msg) {
+        ImuData imu = decodeImu(msg);
+        ekf.propagate(imu.stamp,
+                      {imu.ax, imu.ay, imu.az},
+                      {imu.wx, imu.wy, imu.wz});
+    });
+
+    // When PnP succeeds: update EKF, then hand both poses to the visualizer
+    tracker.onPose([&](double stamp, const Sophus::SE3d& T_pnp, size_t n) {
+        ekf.update(T_pnp);
+        viz.updateBackend(stamp, ekf.pose(), ekf.velocity(), T_pnp, n);
+    });
+
+    // Every cam0 frame: render whatever the visualizer has cached
+    tracker.onFrame([&](const FrameData& f) {
+        viz.render(f);
+    });
+
     tracker.attach(loader);
 
     std::cout << "Streaming — press Q in the window to stop\n";

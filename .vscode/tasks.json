@@ -2,6 +2,16 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "cmake configure (host)",
+            "type": "shell",
+            "command": "rm -f ${workspaceFolder}/build/CMakeCache.txt && flatpak-spawn --host cmake -S ${workspaceFolder} -B ${workspaceFolder}/build -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=Debug -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${workspaceFolder}/build/bin -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.10",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "cmake build",
             "type": "shell",
             "command": "flatpak-spawn --host cmake --build ${workspaceFolder}/build --parallel",

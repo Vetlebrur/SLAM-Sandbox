@@ -16,7 +16,7 @@ public:
         : path_(path), speed_(speed) {}
 
     void addCallback(const std::string& topic, MessageCallback cb) {
-        callbacks_[topic] = std::move(cb);
+        callbacks_[topic].push_back(std::move(cb));
     }
 
     // Block until all messages have been delivered or stop() is called.
@@ -47,7 +47,7 @@ public:
 
             auto it = callbacks_.find(msg.topic);
             if (it != callbacks_.end())
-                it->second(msg);
+                for (auto& cb : it->second) cb(msg);
         }, topics);
     }
 
@@ -57,5 +57,5 @@ private:
     std::string  path_;
     double       speed_;
     std::atomic<bool> stopped_{false};
-    std::map<std::string, MessageCallback> callbacks_;
+    std::map<std::string, std::vector<MessageCallback>> callbacks_;
 };

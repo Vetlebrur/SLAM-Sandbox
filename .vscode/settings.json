@@ -1,0 +1,6 @@
+{
+    "cmake.generator": "Unix Makefiles",
+    "cmake.buildDirectory": "${workspaceFolder}/build-ide",
+    "cmake.configureOnOpen": false,
+    "cmake.automaticReconfigure": false
+}

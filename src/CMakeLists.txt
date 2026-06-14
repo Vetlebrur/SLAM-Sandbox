@@ -28,7 +28,7 @@ foreach(SRC ${SOURCES})
         Sophus::Sophus
         Ceres::ceres
         Eigen3::Eigen
-        opencv_core opencv_imgproc opencv_highgui opencv_features2d opencv_calib3d
+        opencv_core opencv_imgproc opencv_highgui opencv_features2d opencv_calib3d opencv_video
     )
     target_include_directories(${NAME} PRIVATE ${OpenCV_INCLUDE_DIRS})
 endforeach()
